@@ -157,6 +157,13 @@ defmodule AvroEx.Schema.EncoderTest do
       assert AvroEx.encode_schema(schema) == ~S([{"type":"null"},{"type":"int"}])
     end
 
+    test "union default null" do
+      input = ~S({"type": "record", "name": "Record", "fields": [{"type": ["null", "string"], "name": "maybe_null", "default": null}]})
+
+      assert schema = AvroEx.decode_schema!(input)
+      assert AvroEx.encode_schema(schema) == "{\"fields\":[{\"default\":null,\"name\":\"maybe_null\",\"type\":[{\"type\":\"null\"},{\"type\":\"string\"}]}],\"name\":\"Record\",\"type\":\"record\"}"
+    end
+
     test "complex" do
       input = %{
         "type" => "record",
